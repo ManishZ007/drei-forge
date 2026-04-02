@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import EnvironmentAndStaging from "./EnviromentAndStaging";
+import EnvironmentAndStaging from "./EnvironmentAndStaging";
 
 const Scene = () => {
   return (
