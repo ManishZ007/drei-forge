@@ -30,7 +30,6 @@ No big projects here yet — just clean, isolated examples with detailed notes a
 ## 🚀 Getting Started
 
 Want to run these locally? Here's all you need:
-
 ```bash
 # Clone the repo
 git clone https://github.com/your-username/drei-forge.git
@@ -48,7 +47,6 @@ Then open `http://localhost:5173` and explore each study from there.
 ---
 
 ## 📁 Project Structure
-
 ```
 drei-forge/
 ├── src/
@@ -68,7 +66,7 @@ drei-forge/
 
 | # | Concept | What I explored | Status |
 |---|---|---|---|
-| 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment | ✅ Done |
+| 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment, Lightformer, ground | ✅ Done |
 | 02 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
 | 03 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
 | 04 | `useTexture` | Applying image textures to meshes | 📋 Planned |
@@ -90,9 +88,9 @@ The first study covers everything related to **lighting, atmosphere, and environ
 | `ambientLight` | Adds soft light from all directions evenly |
 | `directionalLight` | Mimics sunlight — has position, color, and intensity |
 
-- Used `useHelper` from Drei + `THREE.DirectionalLightHelper` to **visualize where the light is** in the scene — super helpful when you can't see the light source.
+- Used `useHelper` from Drei + `THREE.DirectionalLightHelper` to **visualize where the light is** in the scene.
 - Enabled **shadows** by adding the `shadows` attribute to the `<Canvas>` tag in `App.tsx`.
-- Used `castShadow` on the `directionalLight` and the box mesh, and `receiveShadow` on the plane mesh to get proper shadow rendering.
+- Used `castShadow` on the `directionalLight` and the box mesh, and `receiveShadow` on the plane mesh.
 
 ### ✨ Atmosphere Helpers
 
@@ -118,6 +116,44 @@ The first study covers everything related to **lighting, atmosphere, and environ
 ```tsx
 <Environment background files={["./1.hdr"]} />
 ```
+
+### 🎨 Custom Lighting Inside Environment
+
+You can place a mesh or a `<Lightformer />` inside the `<Environment>` tag to create custom light sources that reflect onto objects in the scene.
+```tsx
+// Simple way — use a colored plane
+<Environment background files={["./1.hdr"]}>
+  <mesh position-z={-1}>
+    <planeGeometry />
+    <meshBasicMaterial color={"orange"} />
+  </mesh>
+</Environment>
+
+// Drei way — use Lightformer for more control
+<Environment background files={["./1.hdr"]}>
+  <Lightformer position-z={-1} scale={2} color={"orange"} intensity={5} />
+</Environment>
+```
+
+> Tip: Comment out the `files` attribute to see the reflection more clearly.
+
+### 🌐 Ground Attribute
+
+Adding the `ground` attribute to `<Environment>` wraps the scene in a projected circle that looks like a real ground surface — great for making objects feel like they're sitting on something solid.
+```tsx
+<Environment
+  background
+  files={["./1.hdr"]}
+  ground={{
+    height: 6,
+    radius: 60,
+    scale: 70,
+  }}
+/>
+```
+
+- Use **Leva controls** to tweak `height`, `radius`, and `scale` in real time to find the right values for your scene.
+- When using `ground`, adjust the mesh `position-y` to `0` so the plane and ground align on the same axis.
 
 ### 🗂️ Key Files
 
