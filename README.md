@@ -32,7 +32,7 @@ No big projects here yet — just clean, isolated examples with detailed notes a
 Want to run these locally? Here's all you need:
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/drei-forge.git
+git clone https://github.com/ManishZ007/drei-forge.git
 cd drei-forge
 
 # Install dependencies
@@ -52,8 +52,9 @@ drei-forge/
 ├── src/
 │   ├── components/
 │   │   ├── Scene.tsx                    # Main scene entry point
-│   │   └── EnvironmentAndStaging.tsx    # Study 01 — Environment & Staging
-│   ├── App.tsx                          # Canvas setup with shadows enabled
+│   │   ├── EnvironmentAndStaging.tsx    # Study 01 — Environment & Staging
+│   │   └── Camera.tsx                   # Study 02 — Camera
+│   ├── App.tsx                          # Canvas setup
 │   └── main.tsx
 ├── public/
 │   └── 1.hdr                           # HDR image for Environment
@@ -67,11 +68,12 @@ drei-forge/
 | # | Concept | What I explored | Status |
 |---|---|---|---|
 | 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment, Lightformer, ground | ✅ Done |
-| 02 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
-| 03 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
-| 04 | `useTexture` | Applying image textures to meshes | 📋 Planned |
-| 05 | `Html` | Overlaying HTML elements inside a 3D scene | 📋 Planned |
-| 06 | `OrbitControls` | Camera rotation, zoom, and pan | 📋 Planned |
+| 02 | Camera | PerspectiveCamera, CubeCamera, reflective materials, orbit animation | ✅ Done |
+| 03 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
+| 04 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
+| 05 | `useTexture` | Applying image textures to meshes | 📋 Planned |
+| 06 | `Html` | Overlaying HTML elements inside a 3D scene | 📋 Planned |
+| 07 | `OrbitControls` | Camera rotation, zoom, and pan | 📋 Planned |
 
 > This list grows as I explore more. Suggestions welcome!
 
@@ -102,21 +104,6 @@ The first study covers everything related to **lighting, atmosphere, and environ
 | `Sky` | Wraps the whole scene in a sky shader with a movable sun using `sunPosition` |
 | `Environment` | The most powerful one — wraps the scene in an HDRI image for realistic reflections and lighting |
 
-### 🌍 Environment — Two Ways to Use It
-
-**With 6 cube map images:**
-```tsx
-<Environment
-  background
-  files={["./px.png", "./nx.png", "./py.png", "./ny.png", "./pz.png", "./nz.png"]}
-/>
-```
-
-**With a single HDR image** (downloaded from [PolyHaven](https://polyhaven.com/)):
-```tsx
-<Environment background files={["./1.hdr"]} />
-```
-
 ### 🎨 Custom Lighting Inside Environment
 
 You can place a mesh or a `<Lightformer />` inside the `<Environment>` tag to create custom light sources that reflect onto objects in the scene.
@@ -139,7 +126,7 @@ You can place a mesh or a `<Lightformer />` inside the `<Environment>` tag to cr
 
 ### 🌐 Ground Attribute
 
-Adding the `ground` attribute to `<Environment>` wraps the scene in a projected circle that looks like a real ground surface — great for making objects feel like they're sitting on something solid.
+Adding the `ground` attribute to `<Environment>` wraps the scene in a projected circle that looks like a real ground surface.
 ```tsx
 <Environment
   background
@@ -157,8 +144,61 @@ Adding the `ground` attribute to `<Environment>` wraps the scene in a projected 
 
 ### 🗂️ Key Files
 
-- **`App.tsx`** — Sets up the `<Canvas>` with `shadows` enabled and renders the `<Scene />` component.
-- **`EnvironmentAndStaging.tsx`** — Contains all the lighting and environment experiments with detailed inline comments explaining each concept.
+- **`App.tsx`** — Sets up the `<Canvas>` and renders the `<Scene />` component.
+- **`EnvironmentAndStaging.tsx`** — All lighting and environment experiments with detailed inline comments.
+
+---
+
+## 🔍 Study 02 — Camera
+
+This study covers **camera types** and **real-time reflection** using Drei helpers, plus orbit animation using `useFrame`.
+
+### 📷 Camera Helpers
+
+| Helper | What it does |
+|---|---|
+| `PerspectiveCamera` | A human-eye-like camera — far things look smaller. `makeDefault` makes it the main scene camera |
+| `CubeCamera` | Captures the scene from all 6 directions and returns a texture used for real-time reflections |
+
+### 🔮 Reflective Sphere with CubeCamera
+
+`CubeCamera` renders the surroundings into a texture and passes it to its children via a render prop pattern. That texture is applied as `envMap` on the material to create a real-time mirror effect.
+```tsx
+<CubeCamera>
+  {(texture) => (
+    <mesh>
+      <sphereGeometry args={[1, 64, 64]} />
+      <meshStandardMaterial
+        envMap={texture}
+        roughness={0}
+        metalness={0.9}
+      />
+    </mesh>
+  )}
+</CubeCamera>
+```
+
+- `roughness={0}` → perfectly smooth, mirror-like surface
+- `metalness={0.9}` → highly metallic look
+
+### 🌀 Orbit Animation with useFrame
+
+The cube orbits around the sphere using `useFrame` and basic circle math:
+```tsx
+useFrame((state, delta) => {
+  angle.current += delta * 0.5; // 0.5 controls orbit speed
+
+  cubeRef.current.position.x = Math.cos(angle.current) * 3; // 3 is orbit radius
+  cubeRef.current.position.z = Math.sin(angle.current) * 3;
+});
+```
+
+`cos()` and `sin()` together trace a perfect circle over time — exactly like the Moon orbiting the Earth.
+
+### 🗂️ Key Files
+
+- **`App.tsx`** — Canvas set up with `antialias` and `alpha` enabled via the `gl` prop.
+- **`Camera.tsx`** — Reflective sphere at the center with an orbiting purple cube animated each frame.
 
 ---
 
