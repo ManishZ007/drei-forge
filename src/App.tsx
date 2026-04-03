@@ -14,4 +14,5 @@ const App = () => {
 export default App;
 
 // first we doing environment and staging
-// for more understanding to the The components called EnvironmentAndStaging.tsx
+// for more understanding go to the  components called EnvironmentAndStaging.tsx
+// that is render is Scene components

@@ -1,6 +1,7 @@
 import {
   Cloud,
   Environment,
+  Lightformer,
   Sky,
   Sparkles,
   Stars,
@@ -27,6 +28,25 @@ const EnvironmentAndStaging = () => {
   //       step: 1,
   //     },
   //   });
+
+  // for ground attributes
+  const groundValues = useControls("ground-attributes", {
+    hight: {
+      value: 6,
+      min: 0,
+      max: 20,
+    },
+    radius: {
+      value: 60,
+      min: 0,
+      max: 100,
+    },
+    scale: {
+      value: 70,
+      min: 0,
+      max: 100,
+    },
+  });
 
   return (
     <>
@@ -67,14 +87,33 @@ const EnvironmentAndStaging = () => {
 
         // use with one single hdr image
         files={["./1.hdr"]}
-      />
+        // bu when you do this the plane y axis the going to the -1 so for that make it 0 so ground and plane looks same y axis
+        // and if you change the plane y axis change the cube y axis also
+        ground={{
+          height: groundValues.hight,
+          radius: groundValues.radius,
+          scale: groundValues.scale,
+        }}
+      >
+        {/* move the plane to the center */}
+        {/* now see that face part of the cube getting little bit of orange */}
+        {/* <mesh position-z={-1}>
+          <planeGeometry />
+          <meshBasicMaterial color={"orange"} />
+        </mesh> */}
 
-      <mesh castShadow>
+        {/* drei way */}
+        {/* to the reflection clearly comment the files attribute  */}
+        {/* intensity attribute increase the light intensity */}
+        {/* <Lightformer position-z={-1} scale={2} color={"orange"} intensity={5} /> */}
+      </Environment>
+
+      <mesh castShadow position-y={1}>
         <boxGeometry />
         <meshStandardMaterial color={"#C7CAC7"} />
       </mesh>
 
-      <mesh receiveShadow position-y={-1} rotation-x={Math.PI * 0.5}>
+      <mesh receiveShadow position-y={0} rotation-x={Math.PI * 0.5}>
         <planeGeometry args={[8, 8]} />
         <meshStandardMaterial side={THREE.DoubleSide} color={"#CC3941"} />
       </mesh>
@@ -151,3 +190,21 @@ export default EnvironmentAndStaging;
 // and background tag is show the all image
 // and if you don't have 6 images then goto the polyHaven website and download the one hdr image
 // and see the use in second comment files attribute
+
+// ******************************************************************
+// now we create one plan and reflect that color to the box mesh
+// so that plan use the Environment sun to cerate there light so we create that plane in Environment tag
+// see the Environment tag
+// so that way you create your own light in the scene
+// this is simle and logical way of lighting we have one dier way also by using called <Lightformer />
+// you just comment the mesh in-side the Environment and uncomment the <Lightformer />
+
+// ******************************************************************
+// now when when we use the background attribute the Environment the object the floating
+// by using ground attribute the
+// so the ground attribute create one circle that wrap aur scene in that
+// for that see the ground attribute or uncomment this
+// if you zoom out you see this ground attribute create the one circle that wrap the entire
+// seen and for remove this just comment that background attribute
+// and now you need to find the exact value for ground attributes for that use leva that use know better
+// to see that uncomment the groundValues useControls
