@@ -1,5 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
-import Camera from "./Camera";
+import GridController from "./Controllers/GridController";
+
 // import EnvironmentAndStaging from "./EnvironmentAndStaging";
 
 const Scene = () => {
@@ -8,7 +9,8 @@ const Scene = () => {
       <OrbitControls />
 
       {/* <EnvironmentAndStaging /> */}
-      <Camera />
+      {/* <Camera /> */}
+      <GridController />
     </>
   );
 };
