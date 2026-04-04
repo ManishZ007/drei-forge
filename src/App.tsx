@@ -29,3 +29,4 @@ export default App;
 // now Controller for that
 // the Controllers are known for helper that we define separately
 // Grid -> GridController.tsx in components/Controllers
+// Camera -> CameraController.tsx in components/Controllers
