@@ -1,10 +1,10 @@
 import {
-  Cloud,
+  // Cloud,
   Environment,
-  Lightformer,
-  Sky,
-  Sparkles,
-  Stars,
+  // Lightformer,
+  // Sky,
+  // Sparkles,
+  // Stars,
   useHelper,
 } from "@react-three/drei";
 import { useControls } from "leva";

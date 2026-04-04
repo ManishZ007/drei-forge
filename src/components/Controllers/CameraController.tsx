@@ -4,7 +4,7 @@ import { button, buttonGroup, useControls } from "leva";
 import * as THREE from "three";
 import type { CameraControls as CameraControlsType } from "@react-three/drei";
 
-const CameraController = (): JSX.Element => {
+const CameraControl = () => {
   const cameraControlRef = useRef<CameraControlsType>(null);
   const { DEG2RAD } = THREE.MathUtils;
 
@@ -75,36 +75,4 @@ const CameraController = (): JSX.Element => {
   );
 };
 
-export default CameraController;
-
-/*
-  CameraControl Component
-  ========================
-  A React Three Fiber component that provides interactive camera controls
-  via a Leva debug panel, along with a reference scene (grid + box mesh).
-
-  Features:
-  ---------
-  - Horizontal Rotation  : Rotate camera left/right by 45°, -90°, or 360°
-  - Vertical Rotation    : Tilt camera up/down by 20° or -40°
-  - Truck                : Slide camera along X/Y axes (1,0), (0,1), (-1,-1)
-  - Zoom                 : Zoom in/out by ±0.25 units
-  - Look At Box          : Snap camera to look at the origin box from (0,1,3)
-
-  Key Implementation Details:
-  ---------------------------
-  - `CameraControls` (drei)  : Provides smooth, imperative camera control methods.
-  - `useRef<CameraControlsType>` : Typed ref to access the CameraControls instance safely.
-  - `useMemo`                : Stabilises the leva config object across renders to prevent
-                               React's "ref accessed during render" warning.
-  - Optional chaining (`?.`) : Guards all ref accesses since the ref starts as null.
-  - `as Record<string, () => void>` : Satisfies leva's strict ButtonGroupOpts typing.
-  - `smoothTime={0.25}`      : Adds an easing effect to all camera transitions.
-
-  Dependencies:
-  -------------
-  - @react-three/fiber
-  - @react-three/drei  (Grid, CameraControls)
-  - leva               (button, buttonGroup, useControls)
-  - three              (MathUtils.DEG2RAD)
-*/
+export default CameraControl;
