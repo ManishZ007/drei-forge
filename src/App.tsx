@@ -43,3 +43,7 @@ export default App;
 // now we study PresentationControls this is in components->Controllers->PresentationControls.tsx
 
 // now the ScrollControls this is in components->Controllers->ScrollControllers.tsx
+
+// now the TransformController this is in components->Controllers->TransformController.tsx
+
+// now the PivotController this is in components->Controllers->PivotController.tsx
