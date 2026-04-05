@@ -9,6 +9,10 @@ const App = () => {
           antialias: true,
           alpha: true,
         }}
+        camera={{
+          position: [0, 0, 5],
+          fov: 75,
+        }}
       >
         <Scene />
       </Canvas>
@@ -37,3 +41,5 @@ export default App;
 // next we understand he orbitController for that we never cerate any separate component we add it in Scene.tsx file so see that
 
 // now we study PresentationControls this is in components->Controllers->PresentationControls.tsx
+
+// now the ScrollControls this is in components->Controllers->ScrollControllers.tsx
