@@ -58,7 +58,9 @@ drei-forge/
 │   │       ├── GridController.tsx             # Study 03 — Grid
 │   │       ├── CameraController.tsx           # Study 03 — CameraControls
 │   │       ├── PresentationController.tsx     # Study 03 — PresentationControls
-│   │       └── ScrollControllers.tsx          # Study 03 — ScrollControls
+│   │       ├── ScrollControllers.tsx          # Study 03 — ScrollControls
+│   │       ├── TransformController.tsx        # Study 03 — TransformControls
+│   │       └── PivotController.tsx            # Study 03 — PivotControls
 │   ├── App.tsx                                # Canvas setup
 │   └── main.tsx
 ├── public/
@@ -75,7 +77,7 @@ drei-forge/
 |---|---|---|---|
 | 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment, Lightformer, ground | ✅ Done |
 | 02 | Camera | PerspectiveCamera, CubeCamera, reflective materials, orbit animation | ✅ Done |
-| 03 | Controls | Grid, CameraControls, OrbitControls, PresentationControls, ScrollControls | ✅ Done |
+| 03 | Controls | Grid, CameraControls, OrbitControls, PresentationControls, ScrollControls, TransformControls, PivotControls | ✅ Done |
 | 04 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
 | 05 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
 | 06 | `useTexture` | Applying image textures to meshes | 📋 Planned |
@@ -230,17 +232,10 @@ This study covers all the **control helpers** drei provides for interacting with
 ```tsx
 const cameraControlRef = useRef<CameraControlsType>(null);
 
-// Rotate horizontally by 45 degrees
-cameraControlRef.current?.rotate(45 * DEG2RAD, 0, true);
-
-// Truck (pan) the camera
-cameraControlRef.current?.truck(1, 0, true);
-
-// Zoom in
-cameraControlRef.current?.zoom(0.25, true);
-
-// Set exact position and look-at point
-cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
+cameraControlRef.current?.rotate(45 * DEG2RAD, 0, true);   // horizontal rotate
+cameraControlRef.current?.truck(1, 0, true);                // pan the camera
+cameraControlRef.current?.zoom(0.25, true);                 // zoom in
+cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true); // set position + look-at
 ```
 
 - `smoothTime={0.25}` → controls how smoothly the camera transitions between positions
@@ -249,10 +244,11 @@ cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
 
 ### 🖱️ OrbitControls
 
-`OrbitControls` lets the user freely rotate, zoom, and pan the scene using mouse or touch. It supports smooth damping and rotation limits.
+`OrbitControls` lets the user freely rotate, zoom, and pan the scene using mouse or touch. Add `makeDefault` when using it alongside `TransformControls` so the camera doesn't move while dragging objects.
 
 | Prop | What it does |
 |---|---|
+| `makeDefault` | Registers as the default camera controller — required when using TransformControls |
 | `enableDamping` | Adds smooth inertia to camera movement |
 | `dampingFactor` | Controls smoothness — lower = smoother |
 | `autoRotate` | Camera automatically rotates around the target |
@@ -282,8 +278,8 @@ cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
 
 - `global` → makes it work across the whole canvas like OrbitControls, not just on the mesh
 - `polar` / `azimuth` → `[min, max]` rotation limits for vertical and horizontal axes
-- `config` → controls drag behavior: `mass` = how heavy it feels, `tension` = how fast it reacts
-- `snap` → controls the return-to-origin behavior after releasing: higher `tension` = snaps back faster
+- `config` → drag behavior: `mass` = how heavy it feels, `tension` = how fast it reacts
+- `snap` → return-to-origin behavior after releasing: higher `tension` = snaps back faster
 
 ### 📜 ScrollControls
 
@@ -291,11 +287,9 @@ cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
 ```tsx
 <ScrollControls pages={3} damping={0.4} infinite horizontal>
   <Scroll>
-    {/* 3D objects that move with scroll */}
     <primitive object={model.scene} position={[1.5, -1, 0]} scale={0.5} />
   </Scroll>
   <Scroll html>
-    {/* HTML content that overlays the 3D scene */}
     <h1 style={{ position: "absolute", top: "60vh" }}>To</h1>
   </Scroll>
 </ScrollControls>
@@ -307,16 +301,59 @@ cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
 - `horizontal` → switches scroll direction to horizontal
 - Use two separate `<Scroll>` tags — one for 3D objects, one with `html` for HTML overlays
 - Objects placed inside `<ScrollControls>` but outside `<Scroll>` stay fixed and don't scroll
-- Used `useGLTF` to load a `.gltf` model and placed it inside the scroll scene
+
+### 🛠️ TransformControls
+
+`TransformControls` adds a **gizmo** (axis handles) directly onto a mesh so you can move, rotate, or scale it interactively in the scene.
+```tsx
+<TransformControls position={[2, 0, 0]} mode="scale">
+  <mesh>
+    <boxGeometry />
+    <meshNormalMaterial />
+  </mesh>
+</TransformControls>
+```
+
+- Wrap any mesh inside `<TransformControls>` to attach the gizmo to it
+- `mode` controls what the gizmo does — `"translate"` (default), `"rotate"`, or `"scale"`
+- The gizmo drives the object — move the gizmo and the mesh follows
+- Always add `makeDefault` to `<OrbitControls>` in the parent when using TransformControls, otherwise dragging the gizmo will also move the camera
+- `position` on `TransformControls` moves the gizmo itself, not the mesh
+
+### 🔵 PivotControls
+
+`PivotControls` is similar to `TransformControls` but more polished — it lets you move, rotate, and scale all in one without switching modes.
+```tsx
+<PivotControls
+  anchor={[-1, 0, 0]}
+  depthTest={false}
+  axisColors={["red", "green", "blue"]}
+  lineWidth={7}
+  scale={2}
+>
+  <mesh>
+    <boxGeometry />
+    <meshNormalMaterial />
+  </mesh>
+</PivotControls>
+```
+
+- `anchor` → positions the pivot handle relative to the mesh — values range from `-1` to `1` on each axis
+- `depthTest={false}` → prevents the gizmo from being hidden behind the mesh so it's always accessible
+- `axisColors` → custom colors for each axis: index `0` = X, `1` = Y, `2` = Z — helps you identify axes at a glance
+- `lineWidth` → increases the thickness of the axis lines
+- `scale` → upscales the entire gizmo size for easier interaction
 
 ### 🗂️ Key Files
 
-- **`App.tsx`** — Canvas with `camera` position and `fov` set directly via the `camera` prop.
+- **`App.tsx`** — Canvas with `camera` position and `fov` set via the `camera` prop.
+- **`Scene.tsx`** — OrbitControls with `makeDefault` — required for TransformControls and PivotControls to work correctly.
 - **`Controllers/GridController.tsx`** — Grid helper study.
 - **`Controllers/CameraController.tsx`** — CameraControls with Leva button groups.
-- **`Scene.tsx`** — OrbitControls study with all configuration options explained in comments.
 - **`Controllers/PresentationController.tsx`** — PresentationControls with snap and config.
 - **`Controllers/ScrollControllers.tsx`** — ScrollControls with 3D model, images, and HTML overlay.
+- **`Controllers/TransformController.tsx`** — TransformControls with translate, rotate, and scale modes.
+- **`Controllers/PivotController.tsx`** — PivotControls with anchor, depthTest, and axis color customization.
 
 ---
 
