@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import SimpleCube from "./Controllers/SimpleCube";
+import PresentationController from "./Controllers/PresentationControls";
 
 // import EnvironmentAndStaging from "./EnvironmentAndStaging";
 
@@ -7,23 +7,24 @@ const Scene = () => {
   return (
     <>
       <OrbitControls
-        enableDamping={true}
-        dampingFactor={0.05}
-        autoRotate={true}
-        autoRotateSpeed={3 * Math.PI}
-        maxAzimuthAngle={Math.PI / 2}
-        minAzimuthAngle={-Math.PI / 2}
-        maxPolarAngle={Math.PI / 4}
-        minPolarAngle={-Math.PI / 4}
+      // enableDamping={true}
+      // dampingFactor={0.05}
+      // autoRotate={true}
+      // autoRotateSpeed={3 * Math.PI}
+      // maxAzimuthAngle={Math.PI / 2}
+      // minAzimuthAngle={-Math.PI / 2}
+      // maxPolarAngle={Math.PI / 4}
+      // minPolarAngle={-Math.PI / 4}
       />
 
       {/* this SimpleCube component is only for understand the OrbitControls */}
-      <SimpleCube />
+      {/* <SimpleCube /> */}
 
       {/* <EnvironmentAndStaging /> */}
       {/* <Camera /> */}
       {/* <GridController /> */}
       {/* <CameraController /> */}
+      <PresentationController />
     </>
   );
 };
