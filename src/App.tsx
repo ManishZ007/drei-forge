@@ -30,3 +30,8 @@ export default App;
 // the Controllers are known for helper that we define separately
 // Grid -> GridController.tsx in components/Controllers
 // Camera -> CameraController.tsx in components/Controllers
+
+// and check that eslint-config.js file that we did come changes in rule section
+// that prevent the unnecessary error line come's when we are doing some buttonGroup actions
+
+// next we understand he orbitController for that we never cerate any separate component we add it in Scene.tsx file so see that
