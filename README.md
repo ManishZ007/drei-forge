@@ -51,13 +51,19 @@ Then open `http://localhost:5173` and explore each study from there.
 drei-forge/
 ├── src/
 │   ├── components/
-│   │   ├── Scene.tsx                    # Main scene entry point
-│   │   ├── EnvironmentAndStaging.tsx    # Study 01 — Environment & Staging
-│   │   └── Camera.tsx                   # Study 02 — Camera
-│   ├── App.tsx                          # Canvas setup
+│   │   ├── Scene.tsx                          # Main scene entry point
+│   │   ├── EnvironmentAndStaging.tsx          # Study 01 — Environment & Staging
+│   │   ├── Camera.tsx                         # Study 02 — Camera
+│   │   └── Controllers/
+│   │       ├── GridController.tsx             # Study 03 — Grid
+│   │       ├── CameraController.tsx           # Study 03 — CameraControls
+│   │       ├── PresentationController.tsx     # Study 03 — PresentationControls
+│   │       └── ScrollControllers.tsx          # Study 03 — ScrollControls
+│   ├── App.tsx                                # Canvas setup
 │   └── main.tsx
 ├── public/
-│   └── 1.hdr                           # HDR image for Environment
+│   ├── 1.hdr                                  # HDR image for Environment
+│   └── model.gltf                             # 3D model for ScrollControls
 └── README.md
 ```
 
@@ -69,11 +75,11 @@ drei-forge/
 |---|---|---|---|
 | 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment, Lightformer, ground | ✅ Done |
 | 02 | Camera | PerspectiveCamera, CubeCamera, reflective materials, orbit animation | ✅ Done |
-| 03 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
-| 04 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
-| 05 | `useTexture` | Applying image textures to meshes | 📋 Planned |
-| 06 | `Html` | Overlaying HTML elements inside a 3D scene | 📋 Planned |
-| 07 | `OrbitControls` | Camera rotation, zoom, and pan | 📋 Planned |
+| 03 | Controls | Grid, CameraControls, OrbitControls, PresentationControls, ScrollControls | ✅ Done |
+| 04 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
+| 05 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
+| 06 | `useTexture` | Applying image textures to meshes | 📋 Planned |
+| 07 | `Html` | Overlaying HTML elements inside a 3D scene | 📋 Planned |
 
 > This list grows as I explore more. Suggestions welcome!
 
@@ -105,8 +111,6 @@ The first study covers everything related to **lighting, atmosphere, and environ
 | `Environment` | The most powerful one — wraps the scene in an HDRI image for realistic reflections and lighting |
 
 ### 🎨 Custom Lighting Inside Environment
-
-You can place a mesh or a `<Lightformer />` inside the `<Environment>` tag to create custom light sources that reflect onto objects in the scene.
 ```tsx
 // Simple way — use a colored plane
 <Environment background files={["./1.hdr"]}>
@@ -125,8 +129,6 @@ You can place a mesh or a `<Lightformer />` inside the `<Environment>` tag to cr
 > Tip: Comment out the `files` attribute to see the reflection more clearly.
 
 ### 🌐 Ground Attribute
-
-Adding the `ground` attribute to `<Environment>` wraps the scene in a projected circle that looks like a real ground surface.
 ```tsx
 <Environment
   background
@@ -139,7 +141,7 @@ Adding the `ground` attribute to `<Environment>` wraps the scene in a projected 
 />
 ```
 
-- Use **Leva controls** to tweak `height`, `radius`, and `scale` in real time to find the right values for your scene.
+- Use **Leva controls** to tweak `height`, `radius`, and `scale` in real time.
 - When using `ground`, adjust the mesh `position-y` to `0` so the plane and ground align on the same axis.
 
 ### 🗂️ Key Files
@@ -161,8 +163,6 @@ This study covers **camera types** and **real-time reflection** using Drei helpe
 | `CubeCamera` | Captures the scene from all 6 directions and returns a texture used for real-time reflections |
 
 ### 🔮 Reflective Sphere with CubeCamera
-
-`CubeCamera` renders the surroundings into a texture and passes it to its children via a render prop pattern. That texture is applied as `envMap` on the material to create a real-time mirror effect.
 ```tsx
 <CubeCamera>
   {(texture) => (
@@ -182,8 +182,6 @@ This study covers **camera types** and **real-time reflection** using Drei helpe
 - `metalness={0.9}` → highly metallic look
 
 ### 🌀 Orbit Animation with useFrame
-
-The cube orbits around the sphere using `useFrame` and basic circle math:
 ```tsx
 useFrame((state, delta) => {
   angle.current += delta * 0.5; // 0.5 controls orbit speed
@@ -199,6 +197,126 @@ useFrame((state, delta) => {
 
 - **`App.tsx`** — Canvas set up with `antialias` and `alpha` enabled via the `gl` prop.
 - **`Camera.tsx`** — Reflective sphere at the center with an orbiting purple cube animated each frame.
+
+---
+
+## 🔍 Study 03 — Controls
+
+This study covers all the **control helpers** drei provides for interacting with and navigating a 3D scene.
+
+### 🔲 Grid
+
+`Grid` renders a reference grid in the scene — useful for visualizing scale and positioning objects.
+```tsx
+<Grid
+  args={[30, 30]}
+  cellSize={0.25}
+  cellColor={"red"}
+  sectionThickness={1.2}
+  fadeDistance={20}
+  fadeStrength={0.75}
+/>
+```
+
+- `args` → `[frontLines, sideLines]` — controls how many lines appear in each direction
+- `cellSize` / `cellColor` → size and color of individual cells
+- `sectionSize` / `sectionColor` / `sectionThickness` → styling for the larger section dividers
+- `fadeDistance` → distance at which the grid starts to fade out (default is 100)
+- `fadeStrength` → how strong the fade effect is (1 = full fade, 0 = no fade)
+
+### 🎥 CameraControls
+
+`CameraControls` is a powerful programmatic camera controller. Unlike `OrbitControls`, you can drive it directly with code using a ref — rotate, truck, zoom, and set look-at positions on demand.
+```tsx
+const cameraControlRef = useRef<CameraControlsType>(null);
+
+// Rotate horizontally by 45 degrees
+cameraControlRef.current?.rotate(45 * DEG2RAD, 0, true);
+
+// Truck (pan) the camera
+cameraControlRef.current?.truck(1, 0, true);
+
+// Zoom in
+cameraControlRef.current?.zoom(0.25, true);
+
+// Set exact position and look-at point
+cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true);
+```
+
+- `smoothTime={0.25}` → controls how smoothly the camera transitions between positions
+- Used **Leva `buttonGroup`** to wire up buttons for each camera action in the GUI
+- `DEG2RAD` from `THREE.MathUtils` converts human-readable degrees into radians
+
+### 🖱️ OrbitControls
+
+`OrbitControls` lets the user freely rotate, zoom, and pan the scene using mouse or touch. It supports smooth damping and rotation limits.
+
+| Prop | What it does |
+|---|---|
+| `enableDamping` | Adds smooth inertia to camera movement |
+| `dampingFactor` | Controls smoothness — lower = smoother |
+| `autoRotate` | Camera automatically rotates around the target |
+| `autoRotateSpeed` | Controls speed of auto rotation |
+| `maxAzimuthAngle` / `minAzimuthAngle` | Horizontal rotation limits (left/right) |
+| `maxPolarAngle` / `minPolarAngle` | Vertical rotation limits (up/down) |
+
+> Best for: product viewers, 3D showcases, or anywhere you want controlled camera angles.
+
+### 🎪 PresentationControls
+
+`PresentationControls` wraps a 3D object and lets the user drag to rotate it. When released, the object snaps back to its original position automatically — like inspecting a product.
+```tsx
+<PresentationControls
+  global
+  polar={[-Math.PI / 3, Math.PI / 3]}
+  azimuth={[-Math.PI / 1.4, Math.PI / 2]}
+  config={{ mass: 2, tension: 500 }}
+  snap={{ mass: 4, tension: 1500 }}
+>
+  <mesh>
+    <boxGeometry />
+    <meshBasicMaterial color={"red"} />
+  </mesh>
+</PresentationControls>
+```
+
+- `global` → makes it work across the whole canvas like OrbitControls, not just on the mesh
+- `polar` / `azimuth` → `[min, max]` rotation limits for vertical and horizontal axes
+- `config` → controls drag behavior: `mass` = how heavy it feels, `tension` = how fast it reacts
+- `snap` → controls the return-to-origin behavior after releasing: higher `tension` = snaps back faster
+
+### 📜 ScrollControls
+
+`ScrollControls` turns the scene into a scroll-driven experience. You can sync 3D objects and HTML content to the scroll position.
+```tsx
+<ScrollControls pages={3} damping={0.4} infinite horizontal>
+  <Scroll>
+    {/* 3D objects that move with scroll */}
+    <primitive object={model.scene} position={[1.5, -1, 0]} scale={0.5} />
+  </Scroll>
+  <Scroll html>
+    {/* HTML content that overlays the 3D scene */}
+    <h1 style={{ position: "absolute", top: "60vh" }}>To</h1>
+  </Scroll>
+</ScrollControls>
+```
+
+- `pages` → how many scroll pages the scene spans
+- `damping` → scroll delay — higher value = slower, more delayed scroll feel
+- `infinite` → enables infinite looping scroll (make sure start and end designs match)
+- `horizontal` → switches scroll direction to horizontal
+- Use two separate `<Scroll>` tags — one for 3D objects, one with `html` for HTML overlays
+- Objects placed inside `<ScrollControls>` but outside `<Scroll>` stay fixed and don't scroll
+- Used `useGLTF` to load a `.gltf` model and placed it inside the scroll scene
+
+### 🗂️ Key Files
+
+- **`App.tsx`** — Canvas with `camera` position and `fov` set directly via the `camera` prop.
+- **`Controllers/GridController.tsx`** — Grid helper study.
+- **`Controllers/CameraController.tsx`** — CameraControls with Leva button groups.
+- **`Scene.tsx`** — OrbitControls study with all configuration options explained in comments.
+- **`Controllers/PresentationController.tsx`** — PresentationControls with snap and config.
+- **`Controllers/ScrollControllers.tsx`** — ScrollControls with 3D model, images, and HTML overlay.
 
 ---
 
