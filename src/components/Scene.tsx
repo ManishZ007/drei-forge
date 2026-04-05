@@ -1,20 +1,24 @@
 // import { OrbitControls } from "@react-three/drei";
 
+import { OrbitControls } from "@react-three/drei";
+import PivotController from "./Controllers/PivotController";
+
 // import EnvironmentAndStaging from "./EnvironmentAndStaging";
 
 const Scene = () => {
   return (
     <>
-      {/* <OrbitControls
-      // enableDamping={true}
-      // dampingFactor={0.05}
-      // autoRotate={true}
-      // autoRotateSpeed={3 * Math.PI}
-      // maxAzimuthAngle={Math.PI / 2}
-      // minAzimuthAngle={-Math.PI / 2}
-      // maxPolarAngle={Math.PI / 4}
-      // minPolarAngle={-Math.PI / 4}
-      /> */}
+      <OrbitControls
+        makeDefault // for using TransformControls
+        // enableDamping={true}
+        // dampingFactor={0.05}
+        // autoRotate={true}
+        // autoRotateSpeed={3 * Math.PI}
+        // maxAzimuthAngle={Math.PI / 2}
+        // minAzimuthAngle={-Math.PI / 2}
+        // maxPolarAngle={Math.PI / 4}
+        // minPolarAngle={-Math.PI / 4}
+      />
 
       {/* this SimpleCube component is only for understand the OrbitControls */}
       {/* <SimpleCube /> */}
@@ -25,6 +29,8 @@ const Scene = () => {
       {/* <CameraController /> */}
       {/* <PresentationController /> */}
       {/* <ScrollControllers /> */}
+      {/* <TransformController /> */}
+      <PivotController />
     </>
   );
 };
