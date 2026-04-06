@@ -1,5 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
-import Text3DComponent from "./Controllers/Text3D";
+
+import PositionAudioController from "./Controllers/PositionAudioController";
 
 const Scene = () => {
   return (
@@ -27,7 +28,8 @@ const Scene = () => {
       {/* <ScrollControllers /> */}
       {/* <TransformController /> */}
       {/* <PivotController /> */}
-      <Text3DComponent />
+      {/* <Text3DComponent /> */}
+      <PositionAudioController />
     </>
   );
 };

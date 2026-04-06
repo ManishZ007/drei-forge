@@ -57,3 +57,5 @@ export default App;
 // now the PivotController this is in components->Controllers->PivotController.tsx
 
 // now we learn how to use 3d text is in  components->Controllers->Text3D.tsx
+
+// now we learn position audio that help to play the sound on specific area components->Controllers->PositionAudioController.tsx
