@@ -13,6 +13,14 @@ const App = () => {
           position: [0, 0, 5],
           fov: 75,
         }}
+
+        // when you learning text then only uncomment this camera properties
+        // camera={{
+        //   fov: 45,
+        //   near: 0.1,
+        //   far: 100,
+        //   position: [1, 1, 6],
+        // }}
       >
         <Scene />
       </Canvas>

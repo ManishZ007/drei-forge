@@ -1,10 +1,5 @@
-// import { OrbitControls } from "@react-three/drei";
-
 import { OrbitControls } from "@react-three/drei";
-
 import Text3DComponent from "./Controllers/Text3D";
-
-// import EnvironmentAndStaging from "./EnvironmentAndStaging";
 
 const Scene = () => {
   return (
