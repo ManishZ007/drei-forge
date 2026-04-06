@@ -47,3 +47,5 @@ export default App;
 // now the TransformController this is in components->Controllers->TransformController.tsx
 
 // now the PivotController this is in components->Controllers->PivotController.tsx
+
+// now we learn how to use 3d text is in  components->Controllers->Text3D.tsx
