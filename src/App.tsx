@@ -66,3 +66,9 @@ export default App;
 // 2nd MeshWobbleMaterialSection.tsx
 // 3rd MeshDistortMaterialSection.tsx
 // 4th MeshRefractionMaterialSection.tsx
+
+// Material
+// located in components -> MainMaterial -> MeshPortalMaterialSection.tsx
+// MeshPortalMaterial
+
+// Thanks................
