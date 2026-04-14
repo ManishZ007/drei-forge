@@ -1,5 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
-import MeshDistortMaterialSection from "./Shaders/MeshDistortMaterialSection";
+import MeshPortalMaterialSectionEx from "./MainMaterial/MeshPortalMaterialSection";
 
 const Scene = () => {
   return (
@@ -33,7 +33,10 @@ const Scene = () => {
       {/* Shaders */}
       {/* <MeshReflectorMaterialSection /> */}
       {/* <MeshWobbleMaterialSection /> */}
-      <MeshDistortMaterialSection />
+      {/* <MeshDistortMaterialSection /> */}
+
+      {/* MainMaterial */}
+      <MeshPortalMaterialSectionEx />
     </>
   );
 };
