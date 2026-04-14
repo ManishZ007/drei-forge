@@ -1,6 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
 
-import PositionAudioController from "./Controllers/PositionAudioController";
+import MeshReflectorMaterialSection from "./Shaders/MeshReflectorMaterialSection";
 
 const Scene = () => {
   return (
@@ -29,7 +29,10 @@ const Scene = () => {
       {/* <TransformController /> */}
       {/* <PivotController /> */}
       {/* <Text3DComponent /> */}
-      <PositionAudioController />
+      {/* <PositionAudioController /> */}
+
+      {/* Shaders */}
+      <MeshReflectorMaterialSection />
     </>
   );
 };

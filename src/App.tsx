@@ -59,3 +59,10 @@ export default App;
 // now we learn how to use 3d text is in  components->Controllers->Text3D.tsx
 
 // now we learn position audio that help to play the sound on specific area components->Controllers->PositionAudioController.tsx
+
+// now most imp the shaders that is located on components->Shaders
+// how to go step by step
+// 1st MeshReflectorMaterialSection.tsx
+// 2nd MeshWobbleMaterialSection.tsx
+// 3rd MeshDistortMaterialSection.tsx
+// 4th MeshRefractionMaterialSection.tsx
