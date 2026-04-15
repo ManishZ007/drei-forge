@@ -24,6 +24,7 @@ No big projects here yet — just clean, isolated examples with detailed notes a
 | [@react-three/drei](https://drei.pmnd.rs/) | Ready-made helpers that make R3F easier |
 | [Vite](https://vitejs.dev/) | Fast dev server & bundler |
 | [Leva](https://github.com/pmndrs/leva) | GUI controls for tweaking values in real time |
+| [maath](https://github.com/pmndrs/maath) | Math utilities by pmndrs — used for `easing.damp` |
 
 ---
 
@@ -51,21 +52,34 @@ Then open `http://localhost:5173` and explore each study from there.
 drei-forge/
 ├── src/
 │   ├── components/
-│   │   ├── Scene.tsx                          # Main scene entry point
-│   │   ├── EnvironmentAndStaging.tsx          # Study 01 — Environment & Staging
-│   │   ├── Camera.tsx                         # Study 02 — Camera
-│   │   └── Controllers/
-│   │       ├── GridController.tsx             # Study 03 — Grid
-│   │       ├── CameraController.tsx           # Study 03 — CameraControls
-│   │       ├── PresentationController.tsx     # Study 03 — PresentationControls
-│   │       ├── ScrollControllers.tsx          # Study 03 — ScrollControls
-│   │       ├── TransformController.tsx        # Study 03 — TransformControls
-│   │       └── PivotController.tsx            # Study 03 — PivotControls
-│   ├── App.tsx                                # Canvas setup
+│   │   ├── Scene.tsx                                    # Main scene entry point
+│   │   ├── EnvironmentAndStaging.tsx                    # Study 01 — Environment & Staging
+│   │   ├── Camera.tsx                                   # Study 02 — Camera
+│   │   ├── Controllers/
+│   │   │   ├── GridController.tsx                       # Study 03 — Grid
+│   │   │   ├── CameraController.tsx                     # Study 03 — CameraControls
+│   │   │   ├── PresentationController.tsx               # Study 03 — PresentationControls
+│   │   │   ├── ScrollControllers.tsx                    # Study 03 — ScrollControls
+│   │   │   ├── TransformController.tsx                  # Study 03 — TransformControls
+│   │   │   ├── PivotController.tsx                      # Study 03 — PivotControls
+│   │   │   ├── Text3D.tsx                               # Study 04 — Text3D
+│   │   │   └── PositionAudioController.tsx              # Study 05 — PositionalAudio
+│   │   ├── Shaders/
+│   │   │   ├── MeshReflectorMaterialSection.tsx         # Study 06 — MeshReflectorMaterial
+│   │   │   ├── MeshWobbleMaterialSection.tsx            # Study 06 — MeshWobbleMaterial
+│   │   │   ├── MeshDistortMaterialSection.tsx           # Study 06 — MeshDistortMaterial
+│   │   │   └── MeshRefractionMaterialSection.tsx        # Study 06 — MeshRefractionMaterial
+│   │   └── MainMaterial/
+│   │       └── MeshPortalMaterialSection.tsx            # Study 07 — MeshPortalMaterial
+│   ├── App.tsx                                          # Canvas setup
 │   └── main.tsx
 ├── public/
-│   ├── 1.hdr                                  # HDR image for Environment
-│   └── model.gltf                             # 3D model for ScrollControls
+│   ├── 1.hdr                                            # HDR image for Environment
+│   ├── 1.glb                                            # 3D model for MeshPortalMaterial
+│   ├── 1.png                                            # Texture for MeshPortalMaterial
+│   ├── fonts/
+│   │   └── bold.ttf                                     # Custom font for Text component
+│   └── model.gltf                                       # 3D model for ScrollControls
 └── README.md
 ```
 
@@ -78,10 +92,10 @@ drei-forge/
 | 01 | Environment & Staging | Lights, shadows, Sparkles, Stars, Cloud, Sky, Environment, Lightformer, ground | ✅ Done |
 | 02 | Camera | PerspectiveCamera, CubeCamera, reflective materials, orbit animation | ✅ Done |
 | 03 | Controls | Grid, CameraControls, OrbitControls, PresentationControls, ScrollControls, TransformControls, PivotControls | ✅ Done |
-| 04 | `Text` / `Text3D` | Rendering 2D and 3D text inside a scene | 📋 Planned |
-| 05 | `useGLTF` | Loading external 3D models (.glb / .gltf files) | 📋 Planned |
-| 06 | `useTexture` | Applying image textures to meshes | 📋 Planned |
-| 07 | `Html` | Overlaying HTML elements inside a 3D scene | 📋 Planned |
+| 04 | Text / Text3D | Rendering 2D and 3D text inside a scene | ✅ Done |
+| 05 | PositionalAudio | Playing sound at a specific position in 3D space | ✅ Done |
+| 06 | Shaders | MeshReflectorMaterial, MeshWobbleMaterial, MeshDistortMaterial, MeshRefractionMaterial | ✅ Done |
+| 07 | Materials | MeshPortalMaterial — portals, easing.damp, CameraControls animation | ✅ Done |
 
 > This list grows as I explore more. Suggestions welcome!
 
@@ -357,6 +371,213 @@ cameraControlRef.current?.setLookAt(0, 1, 3, 0, 0, 0, true); // set position + l
 
 ---
 
+## 🔍 Study 04 — Text / Text3D
+
+This study covers rendering **2D flat text and extruded 3D text** inside a Three.js scene.
+
+- `Text` from Drei renders flat billboard-style text using a `.ttf` font file.
+- `Text3D` renders fully extruded 3D text with depth — great for titles and hero sections.
+- `toneMapped={false}` on the material keeps text color pure and unaffected by scene lighting.
+- For `Text3D`, use `<Center>` from Drei to automatically center the text geometry around the origin.
+
+### 🗂️ Key Files
+
+- **`Controllers/Text3D.tsx`** — Text and Text3D experiments with font loading and material setup.
+
+---
+
+## 🔍 Study 05 — PositionalAudio
+
+This study covers **playing sound at a specific 3D position** in the scene — volume changes based on how close the camera is to the sound source.
+
+- `PositionalAudio` from Drei attaches a spatial audio source to any mesh.
+- The closer the camera gets to the mesh, the louder the sound plays.
+- Great for immersive experiences — footsteps, ambient sounds, interactive objects.
+
+### 🗂️ Key Files
+
+- **`Controllers/PositionAudioController.tsx`** — PositionalAudio with a mesh-attached sound source.
+
+---
+
+## 🔍 Study 06 — Shaders (Special Materials)
+
+This study covers Drei's **built-in shader materials** that go beyond basic PBR — they add visual effects like reflections, wobbling, distortion, and refraction directly on mesh surfaces.
+
+> **Important:** All shader materials need enough geometry segments to look good. More segments = more vertices = smoother visual effects. This is why you'll see high segment counts like `32` or `64` throughout this study.
+
+### 🪞 MeshReflectorMaterial
+
+Creates a **mirror-like reflective floor** that reflects the scene above it.
+
+```tsx
+<mesh rotation-x={-Math.PI * 0.5} position-y={-0.75}>
+  <planeGeometry args={[6, 6]} />
+  <MeshReflectorMaterial
+    side={THREE.DoubleSide}
+    resolution={3995}
+    color={"gray"}
+    blur={[1000, 1000]}
+    mixBlur={1}
+    mirror={1}
+  />
+</mesh>
+```
+
+| Prop | What it does |
+|---|---|
+| `resolution` | Reflection texture quality — higher = sharper but more GPU cost |
+| `blur` | `[horizontal, vertical]` — blurs the reflection for a frosted/soft look |
+| `mixBlur` | How much the blur mixes in (0 = sharp, 1 = full blur) |
+| `mirror` | Reflection strength (0 = no reflection, 1 = full mirror) |
+| `side={THREE.DoubleSide}` | Renders both faces of the plane |
+
+- `rotation-x={-Math.PI * 0.5}` rotates the plane flat (horizontal).
+- Requires `<ambientLight />` and an `<Environment>` for proper reflections.
+
+### 🌊 MeshWobbleMaterial
+
+Animates a mesh so it **continuously wobbles and waves** like jelly.
+
+```tsx
+<mesh>
+  <boxGeometry args={[1, 1, 1, 32, 32, 32]} />
+  <MeshWobbleMaterial color={"#F26E53"} factor={3} speed={3} />
+</mesh>
+```
+
+| Prop | What it does |
+|---|---|
+| `factor` | Wobble strength — how far vertices move from their original position |
+| `speed` | How fast the wobble animation plays |
+
+**Why `32` segments in boxGeometry?**
+MeshWobbleMaterial works by displacing vertices. A box with only `1` segment per face has just 4 corners to move — the wobble looks blocky. With `32` segments, each face has 1024+ vertices, making the wobble smooth and organic.
+
+### 🌀 MeshDistortMaterial
+
+Distorts a mesh using **Simplex noise** — hover-driven animation with smooth `lerp` transitions.
+
+```tsx
+<mesh ref={planeRef} onPointerOver={() => setHover(true)} onPointerOut={() => setHover(false)}>
+  <planeGeometry args={[2, 3, 64, 64]} />
+  <MeshDistortMaterial color={"#F26E53"} speed={2} distort={0}>
+    <GradientTexture colors={["aquamarine", "hotpink"]} stops={[0, 1]} />
+  </MeshDistortMaterial>
+</mesh>
+```
+
+| Prop | What it does |
+|---|---|
+| `distort` | Distortion strength (0 = flat, 1 = heavily distorted) |
+| `speed` | How fast the noise pattern moves — does NOT affect distort strength |
+| `radius` | Scales the noise field — lower = tighter ripples, higher = broader waves |
+
+**Animation with `THREE.MathUtils.lerp`:**
+```tsx
+useFrame(() => {
+  planeRef.current.material.distort = lerp(
+    planeRef.current.material.distort, // current value
+    hover ? 0.4 : 0,                   // target value
+    hover ? 0.05 : 0.01                // speed (5% in, 1% out per frame)
+  );
+});
+```
+
+`lerp(start, end, t)` = `start + (end - start) * t`
+
+It moves a percentage of the remaining distance every frame — giving a natural ease-out feel. Using different `t` values for hover-in (`0.05`) vs hover-out (`0.01`) makes the exit feel lazy and satisfying.
+
+**`GradientTexture`** creates a gradient directly in JSX — no image file needed. `colors` sets the color stops and `stops` sets their positions from `0` to `1`.
+
+### 🔮 MeshRefractionMaterial
+
+Simulates **light bending through glass** — creates a crystal/diamond-like refraction effect on meshes.
+
+- Uses environment maps to calculate how light bends as it passes through the geometry.
+- Works best with `<Environment>` providing the light to refract.
+- Combine with complex geometries (like diamonds or gems) for impressive results.
+
+### 🗂️ Key Files
+
+- **`Shaders/MeshReflectorMaterialSection.tsx`** — Reflective floor with HDR environment.
+- **`Shaders/MeshWobbleMaterialSection.tsx`** — Wobbling jelly cube with high segment count.
+- **`Shaders/MeshDistortMaterialSection.tsx`** — Hover-driven distortion with lerp + GradientTexture.
+- **`Shaders/MeshRefractionMaterialSection.tsx`** — Glass-like refraction effect.
+
+---
+
+## 🔍 Study 07 — Materials (MeshPortalMaterial)
+
+This study covers **MeshPortalMaterial** — Drei's most impressive material that renders an entirely separate 3D world inside the surface of a mesh, like a window or portal to another dimension.
+
+### 🌀 How the Portal Works
+
+```tsx
+<RoundedBox args={[3, 4, 0.1]} radius={0.1} onDoubleClick={() => setActive(!active)}>
+  <MeshPortalMaterial ref={meshPortalMaterialRef}>
+    {/* Everything here is rendered INSIDE the portal */}
+    <primitive object={model.scene} scale={0.6} position-y={0.6} />
+    <mesh>
+      <sphereGeometry args={[5, 64, 64]} />
+      <meshBasicMaterial map={texture} side={THREE.BackSide} />
+    </mesh>
+  </MeshPortalMaterial>
+</RoundedBox>
+```
+
+The `blend` property controls visibility of the portal world:
+- `blend=0` → portal world invisible, mesh shows as normal surface
+- `blend=1` → portal world fully visible, you can see inside
+
+**The sky sphere trick:** A large sphere (`radius=5`) with `side={THREE.BackSide}` wraps the entire portal world — it renders the texture on its inside face, acting as the sky/background.
+
+### ⚡ easing.damp — Physics-Based Animation
+
+```tsx
+useFrame((_, delta) => {
+  easing.damp(
+    meshPortalMaterialRef.current,  // target object
+    "blend",                         // property to animate
+    active ? 1 : 0,                  // goal value
+    0.2,                             // damping factor
+    delta,                           // frame time (makes it fps-independent)
+  );
+});
+```
+
+`easing.damp` from `maath` is like `lerp` but framerate-independent — it uses `delta` (time since last frame) so the animation always takes the same real-world time regardless of whether you're on a 30fps or 120fps screen.
+
+| | `lerp` | `easing.damp` |
+|---|---|---|
+| Speed | Fixed % per frame | Time-based (uses delta) |
+| Framerate | Depends on FPS | Independent |
+| Feel | Mechanical | Organic / springy |
+
+**Critical:** Do NOT set `blend={active ? 1 : 0}` in JSX at the same time as using `easing.damp` — the JSX would override `damp` every render, breaking the smooth animation. Use a `ref` only.
+
+### 📷 Camera Animation with setLookAt
+
+```tsx
+useEffect(() => {
+  if (active) {
+    cameraControlsRef.current.setLookAt(0, 0, 3, 0, 0, 0, true); // zoom in
+  } else {
+    cameraControlsRef.current.setLookAt(0, 0, 5, 0, 0, 0, true); // pull back
+  }
+}, [active]);
+```
+
+`setLookAt(posX, posY, posZ, targetX, targetY, targetZ, animate)` moves the camera to a position AND points it at a target. The last `true` argument enables smooth animation handled internally by `CameraControls`.
+
+- `useEffect` is used here (not `useFrame`) because the camera only needs to move **once** when `active` changes, not every frame.
+
+### 🗂️ Key Files
+
+- **`MainMaterial/MeshPortalMaterialSection.tsx`** — Full portal scene with double-click interaction, easing.damp blend animation, and CameraControls zoom.
+
+---
+
 ## 🧠 Why Drei?
 
 When you start with React Three Fiber, a lot of common tasks — like adding camera controls, loading fonts, or setting up lighting — require quite a bit of boilerplate. **Drei** solves this by providing pre-built, well-tested helpers so you can focus on *what* you're building rather than *how* to wire it up.
@@ -373,9 +594,14 @@ For beginners especially, Drei is a huge quality-of-life upgrade.
 - [Three.js Journey](https://threejs-journey.com/) — highly recommended course for beginners
 - [PolyHaven](https://polyhaven.com/) — free HDR images for Environment
 - [Poimandres GitHub](https://github.com/pmndrs) — the team behind R3F & Drei
+- [maath](https://github.com/pmndrs/maath) — math utilities used for easing.damp
 
 ---
 
 ## 📄 License
 
 MIT — feel free to use any of this for your own learning.
+
+---
+
+> 💡 **Keep going.** Every confusing concept you push through — a weird shader, a lerp that finally clicks, a portal that renders for the first time — that's real progress. The 3D web is one of the most creative spaces in frontend right now, and you're building the foundation to do incredible things in it. One helper at a time. You've got this. 🚀
